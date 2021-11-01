@@ -51,11 +51,40 @@ let rec minimum  l =match  l with
         |[]-> max_int
         |e::q-> min e (minimum q) ;;
         
-        
+(*[minmax l] tenvoie un couple d'entier (minimum, maximum) d'une liste l sans utiliser minimum et maximum même si le principe reste le même:c'est de l'entrainement*)
 let rec minmax l= match l with
-        |[]->(min_int,max_int)
-        |[e]->(e,e)
-        |[e,f]->if e<f then (e,f)
-                    else (f,e)
-        |e::f::q-> if e> f then (( min f  (minmax q),(max e (minmax q))))
-                   else (( min e  (minmax q),(max f (minmax q))))
+        |[]-> max_int,min_int
+        |[e]-> e,e
+        |e::f::q->  let mini,maxi= minmax q in
+                    if e> f then ( min f mini),(max e maxi)
+                    else ( min e mini),(max f maxi )
+(*[pairs n] renvoie une liste d'entiers pairs allant de 2n à 0*)
+let rec pairs n =if n <0 then []
+                 else (2*n)::pairs(n-1);;
+                
+(*[splitp l*]coupe une liste en deux listes de même taille,à 1 près.les éléments d'indices pairs vont à gauche et ceux impairs à droite*)
+let rec splitp =function
+        |[]-> [],[]
+        |[e]->[e],[]
+        |e::f::q->let q1,q2=splitp q in
+                      e::q1,f::q2;;
+(*[ajout n l l2 ] ajoute les n premiers éléments de l à l2 et retourne l2*)
+let rec ajout n l l2 = if  n < 0 then failwith "Invalid n argument"
+                       else if n=0 then l2
+                            else match l with
+                                 |[]->failwith "there is less then n elements in l "
+                                 |e::q -> e::(ajout (n-1) q l2) ;;
+(*[supr n l supprime les n premiers éléments de l*)
+let rec supr n l  = if  n < 0 then failwith "Invalid n argument"
+                       else if n=0 then l
+                            else match l with
+                                 |[]->failwith "there is less then n elements in l "
+                                 |e::q -> supr (n-1) q ;;
+(*[split l coupe une liste en deux listes de même taille à 1 près.Les éléments inférieurs ou égaux à (n(+1 si n impair))/2 sont à gauche*)
+let split l= let rec spli l l2= let nl= ref (taille l) in
+                                if !nl mod 2 <>0 then incr nl ;
+                                
+                                let q1 =ajout (!nl/2) l l2 in 
+                                let q2= supr (!nl/2) l in
+                                q1,q2 in
+             spli l [];;
