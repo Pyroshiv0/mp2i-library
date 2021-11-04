@@ -14,7 +14,9 @@ let rec nieme  l n= if n<0 then failwith "Invalid Argument"
         |[]-> 0(*cette ligne évite l'affichage du message pour annnoncer que le patern matching est non-exhaustif.si la liste est vide,il est impossible d'avoir n-1 inférieur à 0*)
         |e::q->if n=0 then e
                 else nieme q (n-1) 
-         ;;       
+         ;;  
+(*[premier l]renvoie le premier élément de l*)
+let premier l=nieme l 0 ;;         
 (*[recherche l el] renvoie true si el est dans l sinon false*)
 let rec recherche l el= match l with
         |[]->false
@@ -88,3 +90,17 @@ let split l= let rec spli l l2= let nl= ref (taille l) in
                                 let q2= supr (!nl/2) l in
                                 q1,q2 in
              spli l [];;
+(*[fusion l1 l2 fusionne deux listes triées en une liste triée*)
+let rec fusion l1 l2= if taille (l1) =0 then l2
+                      else if taille(l2)=0 then l1
+        else match l1 with
+        |[]->l2
+        |e::q->if taille(l2)<>0 then if e <= premier l2 then e::(fusion q l2)
+                                         else (premier l2)::fusion (e::q) (supr 1 l2)
+            else []    
+(*[tri_ fusion l] effectue le tri fusion de l1*)
+let  rec tri_fusion l1= if taille(l1)<= 1 then l1
+                        else begin 
+                             let q1,q2 = split l1 in
+                             fusion (tri_fusion(q1)) (tri_fusion(q2)) 
+                             end
